@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
-import { ChevronDown, ChevronRight, File, Folder, Home, LogOut, PlusCircle, User } from "lucide-react"
+import { ChevronDown, ChevronRight, File, Folder, Home, LogOut, PlusCircle, User, Search } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -75,6 +75,12 @@ export function Sidebar() {
         </div>
       </ScrollArea>
 
+      {/* <div className="p-4 border-t border-border"> */}
+      <Button variant="ghost" className="w-full justify-start" onClick={() => router.push(`/${domain}/custom-search`)}>
+        <Search className="mr-2 h-4 w-4" />
+        Browser
+      </Button>
+      {/* </div> */}
       <div className="p-4 border-t border-border">
         <Button variant="ghost" className="w-full justify-start" onClick={() => router.push(`/${domain}/profile`)}>
           <User className="mr-2 h-4 w-4" />

@@ -1,7 +1,5 @@
 "use client"
 
-import type React from "react"
-
 import { useState } from "react"
 import { motion } from "framer-motion"
 import { ArrowRight } from "lucide-react"
@@ -12,13 +10,16 @@ import { useToast } from "@/hooks/use-toast"
 
 export default function Home() {
   const [domain, setDomain] = useState("")
+  const [password, setPassword] = useState("")
+  const [step, setStep] = useState<"domain" | "password">("domain")
+
   const router = useRouter()
   const { toast } = useToast()
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleDomainSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (domain.trim()) {
-      router.push(`/${domain.toLowerCase()}`)
+      setStep("password")
     } else {
       toast({
         title: "Domain required",
@@ -28,13 +29,35 @@ export default function Home() {
     }
   }
 
+  const handlePasswordSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (!password.trim()) {
+      toast({
+        title: "Password required",
+        description: "Please enter your password to continue.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    toast({
+      title: "Access granted",
+      description: "Redirecting to your workspace...",
+    })
+
+    setTimeout(() => {
+      router.push(`/${domain.toLowerCase()}`)
+    }, 1500)
+  }
+
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-background">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="container max-w-2xl px-4 py-8"
+        className="container max-w-2xl py-8"
       >
         <div className="flex flex-col items-center text-center space-y-6">
           <div className="space-y-2">
@@ -45,35 +68,71 @@ export default function Home() {
               Your all-in-one collaborative workspace with AI-powered tools
             </p>
           </div>
+
           <div className="w-full max-w-md space-y-4">
-            <form onSubmit={handleSubmit} className="flex flex-col space-y-3">
-              <div className="relative">
-                <Input
-                  type="text"
-                  placeholder="Enter your domain"
-                  value={domain}
-                  onChange={(e) => setDomain(e.target.value)}
-                  className="h-12 pl-4 pr-12 text-lg"
-                />
-                <Button
-                  type="submit"
-                  size="icon"
-                  className="absolute right-1 top-1 h-10 w-10 bg-orange-500 hover:bg-orange-600"
-                >
-                  <ArrowRight className="h-5 w-5" />
-                </Button>
-              </div>
-              <p className="text-sm text-muted-foreground">Try domains like: "demoUser", "somanath", or "design"</p>
-            </form>
+            {step === "domain" && (
+              <form onSubmit={handleDomainSubmit} className="flex flex-col space-y-3">
+                <div className="relative">
+                  <Input
+                    type="text"
+                    placeholder="Enter your domain"
+                    value={domain}
+                    onChange={(e) => setDomain(e.target.value)}
+                    className="h-12 pl-4 pr-12 text-lg"
+                  />
+                  <Button
+                    type="submit"
+                    size="icon"
+                    className="absolute right-1 top-1 h-10 w-10 bg-orange-500 hover:bg-orange-600"
+                  >
+                    <ArrowRight className="h-5 w-5" />
+                  </Button>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Try domains like: "demoUser", "myMetaverse", or "design"
+                </p>
+              </form>
+            )}
+
+            {step === "password" && (
+              <form onSubmit={handlePasswordSubmit} className="flex flex-col space-y-3">
+                <div className="relative">
+                  <Input
+                    type="password"
+                    placeholder={`Password for "${domain}"`}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="h-12 pl-4 pr-12 text-lg"
+                  />
+                  <Button
+                    type="submit"
+                    size="icon"
+                    className="absolute right-1 top-1 h-10 w-10 bg-orange-500 hover:bg-orange-600"
+                  >
+                    <ArrowRight className="h-5 w-5" />
+                  </Button>
+                </div>
+              </form>
+            )}
           </div>
+
+          {/* Dummy Feature Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full mt-8">
             <FeatureCard
               title="Nested Projects"
               description="Organize your work with nested projects and folders"
               icon="📁"
             />
-            <FeatureCard title="AI-Powered" description="Get smart suggestions and summaries with AI" icon="🧠" />
-            <FeatureCard title="Universal Search" description="Find anything across all your workspaces" icon="🔍" />
+            <FeatureCard
+              title="AI-Powered"
+              description="Get smart suggestions and summaries with AI"
+              icon="🧠"
+            />
+            <FeatureCard
+              title="Universal Search"
+              description="Find anything across all your workspaces"
+              icon="🔍"
+            />
           </div>
         </div>
       </motion.div>
